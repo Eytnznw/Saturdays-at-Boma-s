@@ -4,7 +4,8 @@ export enum ViewType {
   DASHBOARD = 'DASHBOARD',
   RSVP = 'RSVP',
   GUESTS = 'GUESTS',
-  MESSAGES = 'MESSAGES'
+  MESSAGES = 'MESSAGES',
+  SEARCH = 'SEARCH'
 }
 
 export interface Guest {
@@ -21,4 +22,9 @@ export interface Message {
   author: string;
   content: string;
   timestamp: number;
+}
+
+export interface SearchResult {
+  text: string;
+  links: { title: string; uri: string }[];
 }

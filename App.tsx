@@ -5,29 +5,36 @@ import Dashboard from './components/Dashboard';
 import RSVPForm from './components/RSVPForm';
 import GuestList from './components/GuestList';
 import MessageBoard from './components/MessageBoard';
+import SearchTool from './components/SearchTool';
 import { Guest, Message, ViewType } from './types';
 
 const App: React.FC = () => {
-    // Application state for navigation, guests, and messages
     const [activeView, setActiveView] = useState<ViewType>(ViewType.DASHBOARD);
     const [guests, setGuests] = useState<Guest[]>(() => {
         try {
             const saved = localStorage.getItem('labuma_guests');
             return saved ? JSON.parse(saved) : [];
-        } catch {
-            return [];
-        }
+        } catch { return []; }
     });
     const [messages, setMessages] = useState<Message[]>(() => {
         try {
             const saved = localStorage.getItem('labuma_messages');
             return saved ? JSON.parse(saved) : [];
-        } catch {
-            return [];
-        }
+        } catch { return []; }
     });
 
-    // Persistence layer for state
+    // ניהול ה-Splash Screen בסיום הטעינה
+    useEffect(() => {
+        const splash = document.getElementById('splash-screen');
+        const root = document.getElementById('root');
+        
+        if (root) root.classList.add('visible');
+        if (splash) {
+            splash.classList.add('fade-out');
+            setTimeout(() => splash.remove(), 300);
+        }
+    }, []);
+
     useEffect(() => { 
         localStorage.setItem('labuma_guests', JSON.stringify(guests)); 
     }, [guests]);
@@ -38,7 +45,6 @@ const App: React.FC = () => {
 
     const handleAddGuest = (g: Guest) => {
         setGuests(prev => [...prev, g]);
-        // Visual transition delay before switching to the guest list
         setTimeout(() => setActiveView(ViewType.GUESTS), 800);
     };
 
@@ -59,6 +65,9 @@ const App: React.FC = () => {
             )}
             {activeView === ViewType.MESSAGES && (
                 <MessageBoard messages={messages} onAddMessage={handleAddMessage} />
+            )}
+            {activeView === ViewType.SEARCH && (
+                <SearchTool />
             )}
         </Layout>
     );

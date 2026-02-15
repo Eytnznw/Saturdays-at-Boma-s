@@ -5,9 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>שבת לבומה - Shabbat Labuma</title>
+    
+    <!-- Preconnect לשרתים קריטיים -->
+    <link rel="preconnect" href="https://esm.sh">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
         body {
             font-family: 'Assistant', sans-serif;
@@ -17,76 +24,77 @@
             overflow-x: hidden;
         }
 
-        /* Splash Screen Styles */
+        /* מסך טעינה בעיצוב יוטיוב - פשוט ומהיר */
         #splash-screen {
             position: fixed;
-            inset: 0;
-            background-color: #1e1b4b; /* indigo-950 */
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #1e1b4b;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            z-index: 9999;
-            transition: opacity 0.5s ease-out, visibility 0.5s;
+            z-index: 10000;
+            transition: opacity 0.25s ease-out;
         }
 
-        .splash-logo {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-            animation: pulse 2s infinite ease-in-out;
-        }
-
-        .splash-text {
+        .splash-content {
+            text-align: center;
             color: white;
-            font-weight: 800;
-            font-size: 1.5rem;
-            letter-spacing: -0.025em;
+            animation: fadeIn 0.4s ease-out;
         }
 
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.1); opacity: 0.8; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
         }
 
-        #splash-screen.hidden {
+        #splash-screen.fade-out {
             opacity: 0;
-            visibility: hidden;
+            pointer-events: none;
         }
 
-        @keyframes itemEnter {
-            from { opacity: 0; transform: translateY(12px) scale(0.98); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
+        #root { 
+            opacity: 0; 
+            transition: opacity 0.3s ease-in;
         }
-        .animate-itemEnter { animation: itemEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #c7d2fe; border-radius: 10px; }
-        
-        .glass-morphism {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+        #root.visible { 
+            opacity: 1; 
+        }
+
+        /* רכיבי טעינה של יוטיוב (Skeletons) */
+        .loading-skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+        }
+
+        @keyframes skeleton-loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
         }
     </style>
+
 <script type="importmap">
 {
   "imports": {
-    "react": "https://esm.sh/react@^19.2.4",
+    "react": "https://esm.sh/react@19.0.0",
+    "react-dom": "https://esm.sh/react-dom@19.0.0",
+    "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
+    "@google/genai": "https://esm.sh/@google/genai@1.41.0",
     "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
-    "react/": "https://esm.sh/react@^19.2.4/",
-    "@google/genai": "https://esm.sh/@google/genai@^1.41.0"
+    "react/": "https://esm.sh/react@^19.2.4/"
   }
 }
 </script>
 </head>
 <body>
     <div id="splash-screen">
-        <div class="splash-logo">🕯️</div>
-        <div class="splash-text">שבת לבומה</div>
-        <div class="mt-4 text-indigo-300 text-sm animate-pulse">טוען אווירה טובה...</div>
+        <div class="splash-content">
+            <div style="font-size: 80px; margin-bottom: 20px;">🕯️</div>
+            <h1 style="font-weight: 800; font-size: 28px; margin: 0;">שבת לבומה</h1>
+            <div style="margin-top: 15px; width: 40px; height: 2px; background: #4f46e5; margin-left: auto; margin-right: auto;" class="loading-skeleton"></div>
+        </div>
     </div>
-
     <div id="root"></div>
 </body>
 </html>

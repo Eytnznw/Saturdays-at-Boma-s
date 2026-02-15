@@ -3,11 +3,12 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App';
 
-/**
- * Entry point for the Shabbat Labuma application.
- */
+// שכבת הגנה למניעת קריסה אם process לא מוגדר (סיבה נפוצה ל"לא נפתח")
+if (typeof (window as any).process === 'undefined') {
+    (window as any).process = { env: {} };
+}
+
 const rootElement = document.getElementById('root');
-const splashScreen = document.getElementById('splash-screen');
 
 if (rootElement) {
     const root = createRoot(rootElement);
@@ -16,14 +17,4 @@ if (rootElement) {
             <App />
         </React.StrictMode>
     );
-
-    // הסרת מסך הטעינה לאחר שהאפליקציה מוכנה
-    // נותנים ל-React שבריר שנייה לסיים את הרינדור הראשוני
-    setTimeout(() => {
-        if (splashScreen) {
-            splashScreen.classList.add('hidden');
-            // הסרה פיזית מה-DOM לאחר האנימציה
-            setTimeout(() => splashScreen.remove(), 500);
-        }
-    }, 100);
 }
