@@ -2,36 +2,28 @@
 import { GoogleGenAI } from "@google/genai";
 import { Message } from "../types";
 
+// Service to generate a community summary from recent messages using Gemini API
 export const generateCommunitySummary = async (messages: Message[]): Promise<string> => {
-  // בדיקה בטוחה לקיום המשתנה
-  const apiKey = typeof process !== 'undefined' ? process.env.API_KEY : (window as any).API_KEY;
-  
-  if (!apiKey) {
-    console.warn("Missing API Key for Gemini Service");
-    return "שבת שלום לכולם! מחכים לראות את כולם בשולחן.";
-  }
+  // Always obtain the API key exclusively from the environment variable process.env.API_KEY.
+  const apiKey = process.env.API_KEY;
+  if (!apiKey || messages.length === 0) return "שבת שלום לכולם! מחכים לראות את כולם בשולחן.";
 
+  // Use the named parameter to initialize GoogleGenAI.
   const ai = new GoogleGenAI({ apiKey });
+  const messagesText = messages.slice(0, 10).map(m => `${m.author}: ${m.content}`).join('\n');
   
-  const messagesText = messages.map(m => `${m.author}: ${m.content}`).join('\n');
-  
-  const prompt = `
-    אתה עוזר קהילתי חם ונעים עבור יוזמה שנקראת "שבת לבומה".
-    להלן הודעות שהשאירו המשתתפים:
-    ${messagesText}
-    
-    בהתבסס על ההודעות הללו, כתוב פסקה קצרה (עד 3 שורות) שמסכמת את האווירה הקהילתית לקראת השבת הקרובה ומאחלת שבת שלום ברוח חיובית.
-    התשובה צריכה להיות בעברית. אל תשתמש בפורמט מרקדאון.
-  `;
-
   try {
+    // Use ai.models.generateContent to query GenAI with both the model name and prompt.
+    // 'gemini-3-flash-preview' is selected for basic text analysis tasks.
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
-      contents: prompt,
+      contents: `אתה עוזר קהילתי חם עבור "שבת לבומה". נתח את ההודעות וכתוב סיכום אווירה חיובי וקצר:\n${messagesText}`,
     });
-    return response.text?.trim() || "שבת שלום לכולם!";
+    
+    // Access the .text property directly (do not call it as a function).
+    return response.text?.trim() || "שבת שלום ומבורכת!";
   } catch (error) {
-    console.error("Gemini Error:", error);
-    return "שבת שלום ומבורכת לכל קהילת לבומה!";
+    console.error("AI Error:", error);
+    return "מתרגשים לקראת השבת הקרובה!";
   }
 };

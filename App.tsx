@@ -5,67 +5,63 @@ import Dashboard from './components/Dashboard';
 import RSVPForm from './components/RSVPForm';
 import GuestList from './components/GuestList';
 import MessageBoard from './components/MessageBoard';
-import { ViewType, Guest, Message } from './types';
+import { Guest, Message, ViewType } from './types';
 
 const App: React.FC = () => {
-  const [activeView, setActiveView] = useState<ViewType>(ViewType.DASHBOARD);
-  const [guests, setGuests] = useState<Guest[]>([]);
-  const [messages, setMessages] = useState<Message[]>([]);
+    // Application state for navigation, guests, and messages
+    const [activeView, setActiveView] = useState<ViewType>(ViewType.DASHBOARD);
+    const [guests, setGuests] = useState<Guest[]>(() => {
+        try {
+            const saved = localStorage.getItem('labuma_guests');
+            return saved ? JSON.parse(saved) : [];
+        } catch {
+            return [];
+        }
+    });
+    const [messages, setMessages] = useState<Message[]>(() => {
+        try {
+            const saved = localStorage.getItem('labuma_messages');
+            return saved ? JSON.parse(saved) : [];
+        } catch {
+            return [];
+        }
+    });
 
-  // Local storage persistence
-  useEffect(() => {
-    const savedGuests = localStorage.getItem('labuma_guests');
-    const savedMessages = localStorage.getItem('labuma_messages');
+    // Persistence layer for state
+    useEffect(() => { 
+        localStorage.setItem('labuma_guests', JSON.stringify(guests)); 
+    }, [guests]);
     
-    if (savedGuests) setGuests(JSON.parse(savedGuests));
-    if (savedMessages) setMessages(JSON.parse(savedMessages));
+    useEffect(() => { 
+        localStorage.setItem('labuma_messages', JSON.stringify(messages)); 
+    }, [messages]);
 
-    // Default mock data if empty
-    if (!savedMessages) {
-        setMessages([
-            { id: '1', author: 'מערכת', content: 'ברוכים הבאים לשבת לבומה! מוזמנים להירשם לתאריכים הקרובים.', timestamp: Date.now() }
-        ]);
-    }
-  }, []);
+    const handleAddGuest = (g: Guest) => {
+        setGuests(prev => [...prev, g]);
+        // Visual transition delay before switching to the guest list
+        setTimeout(() => setActiveView(ViewType.GUESTS), 800);
+    };
 
-  useEffect(() => {
-    localStorage.setItem('labuma_guests', JSON.stringify(guests));
-  }, [guests]);
+    const handleAddMessage = (m: Message) => {
+        setMessages(prev => [m, ...prev]);
+    };
 
-  useEffect(() => {
-    localStorage.setItem('labuma_messages', JSON.stringify(messages));
-  }, [messages]);
-
-  const handleAddGuest = (guest: Guest) => {
-    setGuests(prev => [...prev, guest]);
-    // After 2 seconds, move to guest list to see the update
-    setTimeout(() => setActiveView(ViewType.GUESTS), 2000);
-  };
-
-  const handleAddMessage = (msg: Message) => {
-    setMessages(prev => [msg, ...prev]);
-  };
-
-  const renderContent = () => {
-    switch (activeView) {
-      case ViewType.DASHBOARD:
-        return <Dashboard guests={guests} messages={messages} />;
-      case ViewType.RSVP:
-        return <RSVPForm onAddGuest={handleAddGuest} />;
-      case ViewType.GUESTS:
-        return <GuestList guests={guests} />;
-      case ViewType.MESSAGES:
-        return <MessageBoard messages={messages} onAddMessage={handleAddMessage} />;
-      default:
-        return <Dashboard guests={guests} messages={messages} />;
-    }
-  };
-
-  return (
-    <Layout activeView={activeView} setView={setActiveView}>
-      {renderContent()}
-    </Layout>
-  );
+    return (
+        <Layout activeView={activeView} setView={setActiveView}>
+            {activeView === ViewType.DASHBOARD && (
+                <Dashboard guests={guests} messages={messages} />
+            )}
+            {activeView === ViewType.RSVP && (
+                <RSVPForm onAddGuest={handleAddGuest} />
+            )}
+            {activeView === ViewType.GUESTS && (
+                <GuestList guests={guests} />
+            )}
+            {activeView === ViewType.MESSAGES && (
+                <MessageBoard messages={messages} onAddMessage={handleAddMessage} />
+            )}
+        </Layout>
+    );
 };
 
 export default App;

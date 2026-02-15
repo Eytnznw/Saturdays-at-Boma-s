@@ -9,91 +9,72 @@ interface DashboardProps {
 }
 
 const Dashboard: React.FC<DashboardProps> = ({ guests, messages }) => {
-  const [summary, setSummary] = useState<string>('');
-  const [loading, setLoading] = useState(false);
+    const [summary, setSummary] = useState('');
+    const [loading, setLoading] = useState(false);
+    const total = guests.reduce((sum, g) => sum + g.count, 0);
 
-  const totalParticipants = guests.reduce((sum, g) => sum + g.count, 0);
+    useEffect(() => {
+        // Trigger summary generation if messages exist and summary is not yet generated
+        if (messages.length > 0 && !summary) {
+            setLoading(true);
+            generateCommunitySummary(messages).then(res => {
+                setSummary(res);
+                setLoading(false);
+            });
+        }
+    }, [messages, summary]);
 
-  const fetchSummary = async () => {
-    if (messages.length === 0) return;
-    setLoading(true);
-    const text = await generateCommunitySummary(messages);
-    setSummary(text);
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    if (messages.length > 0 && !summary) {
-        fetchSummary();
-    }
-  }, [messages]);
-
-  return (
-    <div className="space-y-6 animate-fadeIn">
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 to-blue-800 text-white p-6 shadow-lg">
-        <div className="relative z-10">
-          <h2 className="text-3xl font-bold mb-2">השבת הקרובה</h2>
-          <div className="flex items-center gap-2 text-indigo-100 mb-4">
-            <i className="fa-solid fa-clock"></i>
-            <span>יום שישי, 18:30 | פרשת כי-תצא</span>
-          </div>
-          <div className="grid grid-cols-2 gap-4 mt-6">
-            <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
-              <div className="text-sm opacity-80">משתתפים סה"כ</div>
-              <div className="text-3xl font-black">{totalParticipants}</div>
+    return (
+        <div className="space-y-6 animate-itemEnter">
+            {/* Main Stats Card */}
+            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-700 to-blue-900 text-white p-8 shadow-2xl">
+                <div className="relative z-10">
+                    <h2 className="text-4xl font-black mb-1">שבת לבומה</h2>
+                    <p className="opacity-80 italic text-sm">המפגש השכונתי השבועי</p>
+                    <div className="flex gap-4 mt-8">
+                        <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-4 flex-1 border border-white/20">
+                            <div className="text-[10px] uppercase opacity-60 font-bold">משתתפים</div>
+                            <div className="text-3xl font-black">{total}</div>
+                        </div>
+                        <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-4 flex-1 border border-white/20">
+                            <div className="text-[10px] uppercase opacity-60 font-bold">משפחות</div>
+                            <div className="text-3xl font-black">{guests.length}</div>
+                        </div>
+                    </div>
+                </div>
+                <i className="fa-solid fa-dove absolute -right-4 -bottom-4 text-9xl opacity-10 rotate-12"></i>
             </div>
-            <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
-              <div className="text-sm opacity-80">משפחות רשומות</div>
-              <div className="text-3xl font-black">{guests.length}</div>
-            </div>
-          </div>
-        </div>
-        <div className="absolute -right-10 -bottom-10 opacity-10 rotate-12">
-            <i className="fa-solid fa-dove text-9xl"></i>
-        </div>
-      </div>
 
-      <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
-        <div className="flex items-center justify-between mb-4">
-            <h3 className="font-bold text-lg flex items-center gap-2">
-                <i className="fa-solid fa-wand-magic-sparkles text-indigo-500"></i>
-                סיכום האווירה (AI)
-            </h3>
-            <button 
-                onClick={fetchSummary}
-                disabled={loading}
-                className="text-xs font-semibold text-indigo-600 hover:underline disabled:opacity-50"
-            >
-                {loading ? 'מעדכן...' : 'רענן סיכום'}
-            </button>
-        </div>
-        <p className="text-gray-600 leading-relaxed italic">
-          {loading ? 'הבינה המלאכותית מנתחת את ההודעות שלכם...' : (summary || 'עדיין אין מספיק הודעות כדי לסכם את האווירה. תכתבו משהו!')}
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 gap-4">
-        <div className="bg-amber-50 rounded-2xl p-5 border border-amber-100 flex items-start gap-4">
-            <div className="bg-amber-100 p-3 rounded-full text-amber-600">
-                <i className="fa-solid fa-location-dot"></i>
+            {/* AI Community Summary Section */}
+            <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
+                <h3 className="font-bold text-gray-800 mb-3 flex items-center gap-2">
+                    <i className="fa-solid fa-sparkles text-amber-500"></i>
+                    מה קורה בקהילה?
+                </h3>
+                <div className="text-gray-600 text-sm leading-relaxed italic">
+                    {loading ? (
+                        <div className="flex items-center gap-2">
+                            <i className="fa-solid fa-circle-notch animate-spin"></i>
+                            מנתח הודעות...
+                        </div>
+                    ) : (
+                        summary || 'הלוח מחכה להודעות הראשונות שלכם!'
+                    )}
+                </div>
             </div>
-            <div>
-                <h4 className="font-bold text-amber-900">מיקום המפגש</h4>
-                <p className="text-amber-800 text-sm">בבמה המרכזית (לבומה), דשא קדמי.</p>
+
+            {/* Location Information */}
+            <div className="bg-amber-50 p-4 rounded-2xl flex items-center gap-4 border border-amber-100">
+                <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-amber-600">
+                    <i className="fa-solid fa-location-dot"></i>
+                </div>
+                <div>
+                    <div className="font-bold text-amber-900">מיקום המפגש</div>
+                    <div className="text-amber-800 opacity-80 text-sm">בדשא המרכזי של לבומה</div>
+                </div>
             </div>
         </div>
-        <div className="bg-blue-50 rounded-2xl p-5 border border-blue-100 flex items-start gap-4">
-            <div className="bg-blue-100 p-3 rounded-full text-blue-600">
-                <i className="fa-solid fa-utensils"></i>
-            </div>
-            <div>
-                <h4 className="font-bold text-blue-900">מה להביא?</h4>
-                <p className="text-blue-800 text-sm">כל משפחה מביאה מנה אחת, סכו"ם רב-פעמי ומצב רוח טוב.</p>
-            </div>
-        </div>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default Dashboard;
