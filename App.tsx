@@ -23,18 +23,7 @@ const App: React.FC = () => {
         } catch { return []; }
     });
 
-    // ניהול ה-Splash Screen בסיום הטעינה
-    useEffect(() => {
-        const splash = document.getElementById('splash-screen');
-        const root = document.getElementById('root');
-        
-        if (root) root.classList.add('visible');
-        if (splash) {
-            splash.classList.add('fade-out');
-            setTimeout(() => splash.remove(), 300);
-        }
-    }, []);
-
+    // שמירת נתונים ל-LocalStorage
     useEffect(() => { 
         localStorage.setItem('labuma_guests', JSON.stringify(guests)); 
     }, [guests]);

@@ -24,44 +24,11 @@
             overflow-x: hidden;
         }
 
-        /* מסך טעינה בעיצוב יוטיוב - פשוט ומהיר */
-        #splash-screen {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #1e1b4b;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000;
-            transition: opacity 0.25s ease-out;
-        }
-
-        .splash-content {
-            text-align: center;
-            color: white;
-            animation: fadeIn 0.4s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        #splash-screen.fade-out {
-            opacity: 0;
-            pointer-events: none;
-        }
-
         #root { 
-            opacity: 0; 
-            transition: opacity 0.3s ease-in;
-        }
-        #root.visible { 
             opacity: 1; 
         }
 
-        /* רכיבי טעינה של יוטיוב (Skeletons) */
+        /* רכיבי טעינה למקרה של תוכן דינמי */
         .loading-skeleton {
             background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
             background-size: 200% 100%;
@@ -72,6 +39,15 @@
             0% { background-position: 200% 0; }
             100% { background-position: -200% 0; }
         }
+
+        /* אנימציות כניסה מהירות לתוכן */
+        @keyframes itemEnter {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-itemEnter {
+            animation: itemEnter 0.3s ease-out forwards;
+        }
     </style>
 
 <script type="importmap">
@@ -81,20 +57,13 @@
     "react-dom": "https://esm.sh/react-dom@19.0.0",
     "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
     "@google/genai": "https://esm.sh/@google/genai@1.41.0",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
-    "react/": "https://esm.sh/react@^19.2.4/"
+    "react-dom/": "https://esm.sh/react-dom@^19.0.0/",
+    "react/": "https://esm.sh/react@^19.0.0/"
   }
 }
 </script>
 </head>
 <body>
-    <div id="splash-screen">
-        <div class="splash-content">
-            <div style="font-size: 80px; margin-bottom: 20px;">🕯️</div>
-            <h1 style="font-weight: 800; font-size: 28px; margin: 0;">שבת לבומה</h1>
-            <div style="margin-top: 15px; width: 40px; height: 2px; background: #4f46e5; margin-left: auto; margin-right: auto;" class="loading-skeleton"></div>
-        </div>
-    </div>
     <div id="root"></div>
 </body>
 </html>
