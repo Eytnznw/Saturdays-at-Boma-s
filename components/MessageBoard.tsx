@@ -63,7 +63,7 @@ const MessageBoard: React.FC<MessageBoardProps> = ({ messages, onAddMessage }) =
           </div>
         ) : (
           messages.sort((a, b) => b.timestamp - a.timestamp).map((msg) => (
-            <div key={msg.id} className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm animate-slideIn">
+            <div key={msg.id} className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm animate-itemEnter">
               <div className="flex justify-between items-start mb-2">
                 <span className="font-bold text-indigo-700">{msg.author}</span>
                 <span className="text-[10px] text-gray-400">{new Date(msg.timestamp).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' })}</span>

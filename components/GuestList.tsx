@@ -57,7 +57,10 @@ const GuestList: React.FC<GuestListProps> = ({ guests }) => {
                 
                 <div className="grid grid-cols-1 gap-3">
                   {dateGuests.sort((a, b) => b.timestamp - a.timestamp).map((guest) => (
-                    <div key={guest.id} className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between hover:border-indigo-200 transition-all group">
+                    <div 
+                      key={guest.id} 
+                      className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between hover:border-indigo-200 transition-all group animate-itemEnter"
+                    >
                       <div className="flex items-center gap-4">
                         <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-indigo-50 to-blue-50 flex items-center justify-center text-indigo-600 font-bold group-hover:from-indigo-600 group-hover:to-blue-600 group-hover:text-white transition-all text-sm">
                           {guest.name.charAt(0)}
