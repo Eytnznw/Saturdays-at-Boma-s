@@ -11,7 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap" rel="stylesheet">
     
     <script>
-        // הגדרת סביבה גלובלית למניעת קריסות של ספריות חיצוניות
+        // הגדרת סביבה גלובלית למניעת קריסות
         window.process = { env: { API_KEY: "" } };
         window.global = window;
     </script>
@@ -22,20 +22,28 @@
             background-color: #fcfaf7;
             margin: 0;
             padding: 0;
+            display: block !important;
         }
-        /* הצגה מיידית של ה-Root ללא השהיות */
         #root { 
-            display: block;
             min-height: 100vh;
+        }
+        /* אנימציות חלקות */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-itemEnter {
+            animation: fadeIn 0.3s ease-out forwards;
         }
     </style>
 
-<script type="importmap">
+    <!-- Import Map נקי - בלי כפילויות שתוקעות את האתר -->
+    <script type="importmap">
 {
   "imports": {
-    "react": "https://esm.sh/react@19.0.0?dev",
-    "react-dom": "https://esm.sh/react-dom@19.0.0?dev",
-    "react-dom/client": "https://esm.sh/react-dom@19.0.0/client?dev",
+    "react": "https://esm.sh/react@19.0.0",
+    "react-dom": "https://esm.sh/react-dom@19.0.0",
+    "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
     "@google/genai": "https://esm.sh/@google/genai@1.41.0",
     "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
     "react/": "https://esm.sh/react@^19.2.4/"
@@ -45,6 +53,7 @@
 </head>
 <body>
     <div id="root"></div>
-    <!-- האתר ייטען כאן מיידית ברגע שה-JS ירוץ -->
+    <!-- הוספת קריאה למודול הראשי - קריטי להרצה ב-GitHub -->
+    <script type="module" src="./index.tsx"></script>
 </body>
 </html>
