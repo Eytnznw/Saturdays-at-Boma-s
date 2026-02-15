@@ -14,62 +14,62 @@ const Dashboard: React.FC<DashboardProps> = ({ guests, messages }) => {
     const total = guests.reduce((sum, g) => sum + g.count, 0);
 
     useEffect(() => {
+        // טעינת סיכום ה-AI ברקע בלבד
         if (messages.length > 0 && !summary) {
             setLoading(true);
-            generateCommunitySummary(messages).then(res => {
-                setSummary(res);
-                setLoading(false);
-            });
+            generateCommunitySummary(messages)
+                .then(res => setSummary(res))
+                .catch(() => setSummary('שבת שלום לכל הקהילה!'))
+                .finally(() => setLoading(false));
         }
-    }, [messages, summary]);
+    }, [messages.length]);
 
     return (
         <div className="space-y-6 animate-itemEnter">
-            {/* Main Stats Card */}
-            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-700 to-blue-900 text-white p-8 shadow-2xl min-h-[220px] flex flex-col justify-between">
+            {/* כרטיס נתונים מרכזי - מופיע מיד */}
+            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-800 to-blue-900 text-white p-8 shadow-xl">
                 <div className="relative z-10">
-                    <h2 className="text-4xl font-black mb-1">שבת לבומה</h2>
-                    <p className="opacity-80 italic text-sm">המפגש השכונתי השבועי</p>
+                    <h2 className="text-3xl font-black mb-1">שבת לבומה 🕯️</h2>
+                    <p className="opacity-70 text-sm">המפגש הקהילתי שלנו</p>
                     <div className="flex gap-4 mt-8">
-                        <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-4 flex-1 border border-white/20 transition-all hover:bg-white/20">
-                            <div className="text-[10px] uppercase opacity-60 font-bold tracking-wider">משתתפים</div>
+                        <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 flex-1 border border-white/10">
+                            <div className="text-[10px] uppercase opacity-60 font-bold">משתתפים</div>
                             <div className="text-3xl font-black">{total}</div>
                         </div>
-                        <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-4 flex-1 border border-white/20 transition-all hover:bg-white/20">
-                            <div className="text-[10px] uppercase opacity-60 font-bold tracking-wider">משפחות</div>
+                        <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 flex-1 border border-white/10">
+                            <div className="text-[10px] uppercase opacity-60 font-bold">משפחות</div>
                             <div className="text-3xl font-black">{guests.length}</div>
                         </div>
                     </div>
                 </div>
-                <i className="fa-solid fa-dove absolute -right-4 -bottom-4 text-9xl opacity-10 rotate-12 pointer-events-none"></i>
             </div>
 
-            {/* AI Community Summary Section */}
-            <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 min-h-[120px]">
-                <h3 className="font-bold text-gray-800 mb-3 flex items-center gap-2">
-                    <i className="fa-solid fa-sparkles text-amber-500"></i>
-                    מה קורה בקהילה?
-                </h3>
-                <div className="text-gray-600 text-sm leading-relaxed italic">
-                    {loading ? (
-                        <div className="flex items-center gap-2 text-indigo-400">
-                            <i className="fa-solid fa-circle-notch animate-spin"></i>
-                            מנתח הודעות ויוצר סיכום...
-                        </div>
-                    ) : (
-                        summary || 'הלוח מחכה להודעות הראשונות שלכם! כתבו משהו בלוח ההודעות כדי לעדכן את הקהילה.'
-                    )}
-                </div>
-            </div>
-
-            {/* Location Information */}
-            <div className="bg-amber-50 p-4 rounded-2xl flex items-center gap-4 border border-amber-100 hover:shadow-md transition-shadow">
-                <div className="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center text-amber-600 shadow-inner">
-                    <i className="fa-solid fa-location-dot text-lg"></i>
+            {/* מיקום - מופיע מיד */}
+            <div className="bg-amber-50 p-4 rounded-2xl flex items-center gap-4 border border-amber-100">
+                <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-amber-600">
+                    <i className="fa-solid fa-location-dot"></i>
                 </div>
                 <div>
-                    <div className="font-bold text-amber-900">מיקום המפגש</div>
-                    <div className="text-amber-800 opacity-80 text-sm">בדשא המרכזי של לבומה, נפגשים בשישי אחה"צ</div>
+                    <div className="font-bold text-amber-900 text-sm">מיקום המפגש</div>
+                    <div className="text-amber-800 opacity-80 text-xs">בדשא המרכזי, נפגשים בשישי אחה"צ</div>
+                </div>
+            </div>
+
+            {/* סיכום AI - נטען בנפרד ולא עוצר את הדף */}
+            <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+                <h3 className="font-bold text-gray-800 mb-2 text-sm flex items-center gap-2">
+                    <i className="fa-solid fa-sparkles text-amber-500"></i>
+                    עדכוני קהילה
+                </h3>
+                <div className="text-gray-600 text-sm leading-relaxed">
+                    {loading ? (
+                        <span className="flex items-center gap-2 text-indigo-300 animate-pulse">
+                            <i className="fa-solid fa-circle-notch animate-spin"></i>
+                            מעדכן...
+                        </span>
+                    ) : (
+                        summary || 'אין עדכונים חדשים כרגע. כתבו משהו בלוח ההודעות!'
+                    )}
                 </div>
             </div>
         </div>
