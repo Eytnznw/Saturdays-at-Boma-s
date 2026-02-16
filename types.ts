@@ -1,5 +1,4 @@
 
-// Types for the Shabbat Labuma application
 export enum ViewType {
   DASHBOARD = 'DASHBOARD',
   RSVP = 'RSVP',

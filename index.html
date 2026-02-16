@@ -11,7 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap" rel="stylesheet">
     
     <script>
-        // מניעת שגיאות סביבה בדפדפן
+        // אתחול סביבה גלובלית
         window.process = { env: { API_KEY: "" } };
         window.global = window;
     </script>
@@ -36,7 +36,6 @@
         }
     </style>
 
-    <!-- Import Map אחיד - הגרסה חייבת להיות זהה לכל רכיבי React -->
     <script type="importmap">
 {
   "imports": {
@@ -52,7 +51,6 @@
 </head>
 <body>
     <div id="root"></div>
-    <!-- קריאה מפורשת לקובץ ה-index.tsx -->
     <script type="module" src="./index.tsx"></script>
 </body>
 </html>

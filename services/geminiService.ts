@@ -3,12 +3,8 @@ import { GoogleGenAI } from "@google/genai";
 import { Message, SearchResult } from "../types";
 
 const getAI = () => {
-  // בדיקה בטוחה של מפתח ה-API
   const apiKey = (window as any).process?.env?.API_KEY || (process as any)?.env?.API_KEY;
-  if (!apiKey) {
-      console.warn("API Key is missing from environment");
-      return null;
-  }
+  if (!apiKey) return null;
   return new GoogleGenAI({ apiKey });
 };
 
@@ -22,7 +18,7 @@ export const generateCommunitySummary = async (messages: Message[]): Promise<str
     const messagesText = messages.slice(0, 10).map(m => `${m.author}: ${m.content}`).join('\n');
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
-      contents: `אתה עוזר קהילתי חם עבור "שבת לבומה". נתח את ההודעות וכתוב סיכום אווירה חיובי וקצר בערבית/עברית בהתאם להודעות:\n${messagesText}`,
+      contents: `אתה עוזר קהילתי חם עבור "שבת לבומה". נתח את ההודעות וכתוב סיכום אווירה חיובי וקצר בעברית:\n${messagesText}`,
     });
     return response.text?.trim() || "שבת שלום ומבורכת!";
   } catch (error) {

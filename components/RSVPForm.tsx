@@ -2,125 +2,55 @@
 import React, { useState } from 'react';
 import { Guest } from '../types';
 
-interface RSVPFormProps {
-  onAddGuest: (guest: Guest) => void;
-}
-
-const RSVPForm: React.FC<RSVPFormProps> = ({ onAddGuest }) => {
+const RSVPForm: React.FC<{ onAddGuest: (g: Guest) => void }> = ({ onAddGuest }) => {
   const [name, setName] = useState('');
   const [count, setCount] = useState(1);
   const [date, setDate] = useState(() => {
-    // Default to next Friday
     const d = new Date();
     d.setDate(d.getDate() + (5 + 7 - d.getDay()) % 7);
     return d.toISOString().split('T')[0];
   });
   const [notes, setNotes] = useState('');
-  const [submitted, setSubmitted] = useState(false);
+  const [done, setDone] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !date) return;
-
-    const newGuest: Guest = {
-      id: Math.random().toString(36).substr(2, 9),
-      name,
-      count,
-      eventDate: date,
-      dietaryNotes: notes,
-      timestamp: Date.now()
-    };
-
-    onAddGuest(newGuest);
-    setSubmitted(true);
-    
-    setTimeout(() => {
-        setSubmitted(false);
-        setName('');
-        setCount(1);
-        setNotes('');
-    }, 3000);
+    if (!name) return;
+    onAddGuest({ id: Math.random().toString(36).substr(2, 9), name, count, eventDate: date, dietaryNotes: notes, timestamp: Date.now() });
+    setDone(true);
   };
 
-  if (submitted) {
-    return (
-      <div className="flex flex-col items-center justify-center h-64 space-y-4 animate-bounceIn">
-        <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-3xl">
-          <i className="fa-solid fa-check"></i>
-        </div>
-        <h3 className="text-xl font-bold text-gray-800">איזה כיף! נתראה בשבת</h3>
-        <p className="text-gray-500">הפרטים שלך נשמרו בהצלחה.</p>
+  if (done) return (
+    <div className="text-center py-20 space-y-4 animate-bounceIn">
+      <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto text-4xl">
+        <i className="fa-solid fa-check"></i>
       </div>
-    );
-  }
+      <h3 className="text-2xl font-bold">נרשמת בהצלחה!</h3>
+      <p className="text-gray-500">מחכים לראות אתכם בשבת.</p>
+    </div>
+  );
 
   return (
-    <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-      <h2 className="text-2xl font-bold mb-6 text-gray-800">הרשמה למפגש</h2>
-      <form onSubmit={handleSubmit} className="space-y-5">
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1">תאריך השבת</label>
-          <input 
-            type="date" 
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            required
-            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1">שם המשתתף / משפחה</label>
-          <input 
-            type="text" 
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-            placeholder="למשל: משפחת כהן"
-            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1">כמות אנשים (כולל ילדים)</label>
-          <div className="flex items-center gap-4">
-            <button 
-              type="button" 
-              onClick={() => setCount(Math.max(1, count - 1))}
-              className="w-12 h-12 rounded-xl bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-xl font-bold text-gray-600 transition-colors"
-            >
-              -
-            </button>
-            <div className="text-2xl font-black w-8 text-center">{count}</div>
-            <button 
-              type="button" 
-              onClick={() => setCount(count + 1)}
-              className="w-12 h-12 rounded-xl bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-xl font-bold text-gray-600 transition-colors"
-            >
-              +
-            </button>
-          </div>
-        </div>
-
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1">הערות / מה מביאים? (אופציונלי)</label>
-          <textarea 
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            placeholder="למשל: פשטידת תירס וסלט ירוק"
-            rows={2}
-            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all resize-none"
-          />
-        </div>
-
-        <button 
-          type="submit"
-          className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-indigo-200 transition-all active:scale-95"
-        >
-          אני מגיע/ה! 🚀
-        </button>
-      </form>
-    </div>
+    <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 space-y-5">
+      <h2 className="text-2xl font-bold mb-4">הרשמה לשבת</h2>
+      <div>
+        <label className="block text-xs font-bold mb-1 opacity-60 uppercase">תאריך</label>
+        <input type="date" value={date} onChange={e => setDate(e.target.value)} className="w-full p-3 bg-gray-50 rounded-xl border-none outline-none focus:ring-2 focus:ring-indigo-500" />
+      </div>
+      <div>
+        <label className="block text-xs font-bold mb-1 opacity-60 uppercase">שם משפחה / פרטי</label>
+        <input type="text" value={name} onChange={e => setName(e.target.value)} required className="w-full p-3 bg-gray-50 rounded-xl border-none outline-none focus:ring-2 focus:ring-indigo-500" />
+      </div>
+      <div>
+        <label className="block text-xs font-bold mb-1 opacity-60 uppercase">כמות אנשים: {count}</label>
+        <input type="range" min="1" max="15" value={count} onChange={e => setCount(parseInt(e.target.value))} className="w-full" />
+      </div>
+      <div>
+        <label className="block text-xs font-bold mb-1 opacity-60 uppercase">מה מביאים? (אופציונלי)</label>
+        <textarea value={notes} onChange={e => setNotes(e.target.value)} className="w-full p-3 bg-gray-50 rounded-xl border-none outline-none focus:ring-2 focus:ring-indigo-500" />
+      </div>
+      <button type="submit" className="w-full bg-indigo-600 text-white font-black py-4 rounded-2xl hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100">אני מגיע/ה!</button>
+    </form>
   );
 };
 

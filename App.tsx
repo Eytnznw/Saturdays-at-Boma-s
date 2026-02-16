@@ -11,19 +11,14 @@ import { Guest, Message, ViewType } from './types';
 const App: React.FC = () => {
     const [activeView, setActiveView] = useState<ViewType>(ViewType.DASHBOARD);
     const [guests, setGuests] = useState<Guest[]>(() => {
-        try {
-            const saved = localStorage.getItem('labuma_guests');
-            return saved ? JSON.parse(saved) : [];
-        } catch { return []; }
+        const saved = localStorage.getItem('labuma_guests');
+        return saved ? JSON.parse(saved) : [];
     });
     const [messages, setMessages] = useState<Message[]>(() => {
-        try {
-            const saved = localStorage.getItem('labuma_messages');
-            return saved ? JSON.parse(saved) : [];
-        } catch { return []; }
+        const saved = localStorage.getItem('labuma_messages');
+        return saved ? JSON.parse(saved) : [];
     });
 
-    // שמירת נתונים ל-LocalStorage
     useEffect(() => { 
         localStorage.setItem('labuma_guests', JSON.stringify(guests)); 
     }, [guests]);
