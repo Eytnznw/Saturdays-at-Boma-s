@@ -11,7 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap" rel="stylesheet">
     
     <script>
-        // הגדרת סביבה גלובלית למניעת קריסות
+        // מניעת שגיאות סביבה בדפדפן
         window.process = { env: { API_KEY: "" } };
         window.global = window;
     </script>
@@ -27,7 +27,6 @@
         #root { 
             min-height: 100vh;
         }
-        /* אנימציות חלקות */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
@@ -37,7 +36,7 @@
         }
     </style>
 
-    <!-- Import Map נקי - בלי כפילויות שתוקעות את האתר -->
+    <!-- Import Map אחיד - הגרסה חייבת להיות זהה לכל רכיבי React -->
     <script type="importmap">
 {
   "imports": {
@@ -53,7 +52,7 @@
 </head>
 <body>
     <div id="root"></div>
-    <!-- הוספת קריאה למודול הראשי - קריטי להרצה ב-GitHub -->
+    <!-- קריאה מפורשת לקובץ ה-index.tsx -->
     <script type="module" src="./index.tsx"></script>
 </body>
 </html>
